@@ -1,4 +1,4 @@
-package com.pard.server.fashion_muse.User.domain;
+package com.pard.server.fashion_muse.user.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

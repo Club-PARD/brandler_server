@@ -1,6 +1,6 @@
-package com.pard.server.fashion_muse.UserScrap.domain;
+package com.pard.server.fashion_muse.userscrap.domain;
 
-import com.pard.server.fashion_muse.User.domain.User;
+import com.pard.server.fashion_muse.user.domain.User;
 import com.pard.server.fashion_muse.brand.domain.Brand;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
