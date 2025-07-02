@@ -27,8 +27,11 @@ public class UserService {
     public UserScrapResponse userScrap(Long userId, Long brandId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new RuntimeException("유저가 존재하지 않습니다."));
-        Brand brand = brandRepository.findById(brandId)
-                .orElseThrow(()-> new RuntimeException("브랜드가 존재하지 않습니다."));
+
+        Brand brand = brandRepository.findByIdWithLock(brandId);
+        if (brand == null) {
+            throw new RuntimeException("브랜드가 존재하지 않습니다.");
+        }
 
         Optional<UserScrap> findUserScrap = userScrapRepository.findByUserAndBrand(user, brand);
         boolean isScrapped;
