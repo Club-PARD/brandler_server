@@ -1,4 +1,4 @@
-package com.pard.server.fashion_muse.brand.controller.responseDto;
+package com.pard.server.fashion_muse.user.controller.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

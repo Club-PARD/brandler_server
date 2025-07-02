@@ -3,6 +3,7 @@ package com.pard.server.fashion_muse.user.service;
 import com.pard.server.fashion_muse.brand.domain.Brand;
 import com.pard.server.fashion_muse.brand.repository.Brandrepository;
 import com.pard.server.fashion_muse.user.controller.response.UserScrapBrandResponse;
+import com.pard.server.fashion_muse.user.controller.response.UserScrapResponse;
 import com.pard.server.fashion_muse.user.domain.User;
 import com.pard.server.fashion_muse.user.repository.UserRepository;
 import com.pard.server.fashion_muse.userscrap.domain.UserScrap;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,31 @@ public class UserService {
     private final UserRepository userRepository;
     private final Brandrepository brandRepository;
     private final UserScrapRepository userScrapRepository;
+
+    @Transactional
+    public UserScrapResponse userScrap(Long userId, Long brandId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new RuntimeException("유저가 존재하지 않습니다."));
+        Brand brand = brandRepository.findById(brandId)
+                .orElseThrow(()-> new RuntimeException("브랜드가 존재하지 않습니다."));
+
+        Optional<UserScrap> findUserScrap = userScrapRepository.findByUserAndBrand(user, brand);
+        boolean isScrapped;
+
+        if (findUserScrap.isPresent()) {
+            userScrapRepository.delete(findUserScrap.get());
+            brand.setScrapCount(brand.getScrapCount() - 1);
+            isScrapped = false;
+        }else{
+            UserScrap scrap = new UserScrap(null, user, brand);
+            userScrapRepository.save(scrap);
+            brand.setScrapCount(
+                    brand.getScrapCount() == null ? 1 : brand.getScrapCount() + 1
+            );
+            isScrapped = true;
+        }
+        return UserScrapResponse.of(brandId, isScrapped);
+    }
 
     @Transactional
     public List<UserScrapBrandResponse> getUserScrapList(Long userId) {
