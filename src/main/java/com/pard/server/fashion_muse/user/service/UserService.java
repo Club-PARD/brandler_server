@@ -28,27 +28,22 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new RuntimeException("유저가 존재하지 않습니다."));
 
-        Brand brand = brandRepository.findByIdWithLock(brandId);
-        if (brand == null) {
-            throw new RuntimeException("브랜드가 존재하지 않습니다.");
-        }
+        Brand brand = brandRepository.findById(brandId)
+                .orElseThrow(() -> new RuntimeException("브랜드가 존재하지 않습니다."));
 
         Optional<UserScrap> findUserScrap = userScrapRepository.findByUserAndBrand(user, brand);
         boolean isScrapped;
 
         if (findUserScrap.isPresent()) {
             userScrapRepository.delete(findUserScrap.get());
-            brand.setScrapCount(brand.getScrapCount() - 1);
             isScrapped = false;
         }else{
             UserScrap scrap = new UserScrap(null, user, brand);
             userScrapRepository.save(scrap);
-            brand.setScrapCount(
-                    brand.getScrapCount() == null ? 1 : brand.getScrapCount() + 1
-            );
             isScrapped = true;
         }
-        return UserScrapResponse.of(brandId, isScrapped);
+        Long scrapCount = userScrapRepository.countByBrandId(brandId);
+        return UserScrapResponse.of(brandId, isScrapped, scrapCount);
     }
 
     @Transactional
@@ -70,17 +65,8 @@ public class UserService {
         List<Brand> brands = brandRepository.findAllById(brandIds);
 
         for (Brand brand : brands) {
-            UserScrap userScrap = userScrapRepository.findByUserAndBrand(user, brand)
-                    .orElseThrow(() -> new RuntimeException("스크랩 완료된 유저의 브랜드가 존재하지 않습니다."));
-
-            if (userScrap != null) {
-                userScrapRepository.delete(userScrap);
-                brand.setScrapCount(
-                        brand.getScrapCount() == null || brand.getScrapCount() <= 0
-                                ? 0
-                                : brand.getScrapCount() - 1
-                );
-            }
+            userScrapRepository.findByUserAndBrand(user, brand)
+                    .ifPresent(userScrapRepository::delete);
         }
     }
 

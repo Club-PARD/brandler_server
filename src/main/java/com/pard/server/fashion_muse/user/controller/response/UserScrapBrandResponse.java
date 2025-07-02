@@ -16,7 +16,6 @@ public class UserScrapBrandResponse {
     private String brandName;
     private String brandLogoUrl;
     private Integer brandGenre;
-    private Integer scrapCount;
 
     public static UserScrapBrandResponse of(Brand brand) {
         return UserScrapBrandResponse.builder()
@@ -24,7 +23,6 @@ public class UserScrapBrandResponse {
                 .brandName(brand.getName())
                 .brandLogoUrl(brand.getBrandLogoUrl())
                 .brandGenre(brand.getBrandGenre())
-                .scrapCount(brand.getScrapCount())
                 .build();
     }
 

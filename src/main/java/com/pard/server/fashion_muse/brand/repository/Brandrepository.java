@@ -12,8 +12,4 @@ import java.util.List;
 public interface Brandrepository extends JpaRepository<Brand, Long> {
     List<Brand> findTop10ByOrderByScrapCountDesc();
 
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select b from Brand b where b.id = :id")
-    Brand findByIdWithLock(@Param("id") Long id);
-
 }

@@ -31,8 +31,6 @@ public class Brand {
 
     private String brandHomepageUrl;
 
-    private Integer scrapCount;
-
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
 }
