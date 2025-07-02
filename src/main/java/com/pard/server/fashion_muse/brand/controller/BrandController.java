@@ -19,9 +19,9 @@ public class BrandController {
 
     private final BrandService brandService;
 
-    @PostMapping("/{brandId}/scrap")
+    @PostMapping("/{brandId}/scraps")
     public ResponseEntity<UserScrapResponse> userScrap(@PathVariable Long brandId) {
-        //현재는 임시 로그인을 안했기 때문
+        //현재는 임시, 로그인을 안했기 때문
         Long userId = 1L;
         UserScrapResponse response = brandService.userScrap(userId, brandId);
         return ResponseEntity.ok(response);
