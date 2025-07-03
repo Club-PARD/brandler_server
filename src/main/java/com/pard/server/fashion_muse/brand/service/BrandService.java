@@ -23,15 +23,15 @@ public class BrandService {
     private final UserRepository userRepository;
     private final UserScrapRepository userScrapRepository;
 
-    @Transactional
-    public List<BrandUpperResponse> getTop10ScrappedBrands() {
-        List<Brand> brands = brandRepository.findTop10ByOrderByScrapCountDesc();
-        return brands.stream()
-                .map(brand -> {
-                    Long count = userScrapRepository.countByBrandId(brand.getId());
-                    return BrandUpperResponse.of(brand, count);
-                })
-                .toList();
-    }
+//    @Transactional
+//    public List<BrandUpperResponse> getTop10ScrappedBrands() {
+//        List<Brand> brands = brandRepository.findTop10ByOrderByScrapCountDesc();
+//        return brands.stream()
+//                .map(brand -> {
+//                    Long count = userScrapRepository.countByBrandId(brand.getId());
+//                    return BrandUpperResponse.of(brand, count);
+//                })
+//                .toList();
+//    }
 
 }
