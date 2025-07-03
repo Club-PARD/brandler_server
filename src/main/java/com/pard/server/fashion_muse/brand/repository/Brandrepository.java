@@ -10,6 +10,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface Brandrepository extends JpaRepository<Brand, Long> {
-    List<Brand> findTop10ByOrderByScrapCountDesc();
+    //List<Brand> findTop10ByOrderByScrapCountDesc();
 
 }

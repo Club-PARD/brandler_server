@@ -27,7 +27,10 @@ public class BrandService {
     public List<BrandUpperResponse> getTop10ScrappedBrands() {
         List<Brand> brands = brandRepository.findTop10ByOrderByScrapCountDesc();
         return brands.stream()
-                .map(BrandUpperResponse::of)
+                .map(brand -> {
+                    Long count = userScrapRepository.countByBrandId(brand.getId());
+                    return BrandUpperResponse.of(brand, count);
+                })
                 .toList();
     }
 

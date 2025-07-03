@@ -15,12 +15,14 @@ public class BrandUpperResponse {
     private Long brandId;
     private String brandName;
     private String brandLogoUrl;
+    private Long scrapCount;
 
-    public static BrandUpperResponse of(Brand brand) {
+    public static BrandUpperResponse of(Brand brand, Long scrapCount) {
         return BrandUpperResponse.builder()
                 .brandId(brand.getId())
                 .brandName(brand.getName())
                 .brandLogoUrl(brand.getBrandLogoUrl())
+                .scrapCount(scrapCount)
                 .build();
     }
 }
