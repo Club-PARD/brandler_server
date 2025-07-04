@@ -1,5 +1,6 @@
 package com.pard.server.fashion_muse.brand.service;
 
+import com.pard.server.fashion_muse.brand.controller.request.BrandCreateRequest;
 import com.pard.server.fashion_muse.brand.controller.responseDto.BrandUpperResponse;
 import com.pard.server.fashion_muse.user.controller.response.UserScrapResponse;
 import com.pard.server.fashion_muse.brand.domain.Brand;
@@ -38,6 +39,18 @@ public class BrandService {
                         .scrapCount((Long) row[3])
                         .build())
                 .toList();
+    }
+
+    @Transactional
+    public Brand createBrand(BrandCreateRequest request) {
+        Brand brand = new Brand();
+        brand.setName(request.getName());
+        brand.setBrandLogoUrl(request.getBrandLogoUrl());
+        brand.setBrandBannerUrl(request.getBrandBannerUrl());
+        brand.setBrandGenre(request.getBrandGenre());
+        brand.setBrandHomepageUrl(request.getBrandHomepageUrl());
+
+        return brandRepository.save(brand);
     }
 
 }
