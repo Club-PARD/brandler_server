@@ -2,6 +2,7 @@ package com.pard.server.fashion_muse.user.service;
 
 import com.pard.server.fashion_muse.brand.domain.Brand;
 import com.pard.server.fashion_muse.brand.repository.Brandrepository;
+import com.pard.server.fashion_muse.user.controller.request.UserCreateRequest;
 import com.pard.server.fashion_muse.user.controller.response.UserScrapBrandResponse;
 import com.pard.server.fashion_muse.user.controller.response.UserScrapResponse;
 import com.pard.server.fashion_muse.user.domain.User;
@@ -68,6 +69,14 @@ public class UserService {
             userScrapRepository.findByUserAndBrand(user, brand)
                     .ifPresent(userScrapRepository::delete);
         }
+    }
+
+    @Transactional
+    public User createUser(UserCreateRequest request) {
+        User user = new User();
+        user.setName(request.getName());
+        user.setGenre(request.getGenre());
+        return userRepository.save(user);
     }
 
 }
