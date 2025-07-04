@@ -31,7 +31,7 @@ public class UserController {
         return ResponseEntity.ok(scraps);
     }
 
-    @DeleteMapping("/{userId}/scraps/{brandId}")
+    @DeleteMapping("/{userId}/scraps")
     public ResponseEntity<Void> deleteUserBrandScrap(@PathVariable Long userId,
                                                      @RequestBody List<Long> brandIds) {
         userService.deleteUserScrap(userId, brandIds);

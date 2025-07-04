@@ -16,10 +16,10 @@ public class BrandController {
 
     private final BrandService brandService;
 
-//    @GetMapping("/brands/top")
-//    public ResponseEntity<List<BrandUpperResponse>> getTopBrands() {
-//        List<BrandUpperResponse> topBrands = brandService.getTop10ScrappedBrands();
-//        return ResponseEntity.ok(topBrands);
-//    }
+    @GetMapping("/brands/top")
+    public ResponseEntity<List<BrandUpperResponse>> getTopBrands() {
+        List<BrandUpperResponse> result = brandService.getTop10ScrappedBrands();
+        return ResponseEntity.ok(result);
+    }
 
 }
