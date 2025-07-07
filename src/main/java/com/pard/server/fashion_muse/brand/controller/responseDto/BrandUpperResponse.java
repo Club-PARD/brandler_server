@@ -15,6 +15,7 @@ public class BrandUpperResponse {
     private Long brandId;
     private String brandName;
     private String brandLogoUrl;
+    private String brandBannerUrl;
     private Long scrapCount;
 
     public static BrandUpperResponse of(Brand brand, Long scrapCount) {
@@ -22,6 +23,7 @@ public class BrandUpperResponse {
                 .brandId(brand.getId())
                 .brandName(brand.getName())
                 .brandLogoUrl(brand.getBrandLogoUrl())
+                .brandBannerUrl(brand.getBrandBannerUrl())
                 .scrapCount(scrapCount)
                 .build();
     }

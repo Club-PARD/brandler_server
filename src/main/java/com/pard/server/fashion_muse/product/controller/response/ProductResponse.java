@@ -12,6 +12,7 @@ public class ProductResponse {
     private String productName;
     private String productImageUrl;
     private String productCategory;
+    private String price;
 
     public static ProductResponse of(Product product) {
         return ProductResponse.builder()
@@ -19,6 +20,7 @@ public class ProductResponse {
                 .productName(product.getProductName())
                 .productImageUrl(product.getProductImageUrl())
                 .productCategory(product.getProductCategory())
+                .price(product.getProductPrice())
                 .build();
     }
 }

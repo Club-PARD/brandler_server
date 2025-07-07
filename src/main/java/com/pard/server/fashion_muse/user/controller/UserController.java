@@ -37,11 +37,11 @@ public class UserController {
         return ResponseEntity.ok(scraps);
     }
 
-    @DeleteMapping("/scraps")
+    @DeleteMapping("/scraps/{brandId}")
     public ResponseEntity<Void> deleteUserBrandScrap(@RequestParam String email,
-                                                     @RequestBody List<Long> brandIds) {
+                                                     @PathVariable Long brandId) {
         User user = userService.findByEmail(email);
-        userService.deleteUserScrap(user.getId(), brandIds);
+        userService.deleteUserScrap(user.getId(), List.of(brandId));
         return ResponseEntity.ok(null);
     }
 
@@ -53,10 +53,11 @@ public class UserController {
     }
 
     @GetMapping("/auth/check-email")
-    public ResponseEntity<Void> checkEmail(@RequestParam String email) {
-        boolean exists = userService.existsByEmail(email);
-        if (exists) {
-            return ResponseEntity.ok().build();
+    public ResponseEntity<?> checkEmail(@RequestParam String email) {
+        User user = userService.findByEmail(email);
+        if (user != null) {
+            UserResponse response = UserResponse.of(user);
+            return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.noContent().build();
         }

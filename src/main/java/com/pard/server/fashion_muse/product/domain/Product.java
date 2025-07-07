@@ -24,6 +24,8 @@ public class Product {
 
     private String productCategory;
 
+    private String productPrice;
+
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -15,6 +15,7 @@ public class BrandLowerResponse {
     private Long brandId;
     private String brandName;
     private String brandLogoUrl;
+    private String brandBannerUrl;
     private Long scrapCount;
     private Long productCount;
 
@@ -23,6 +24,7 @@ public class BrandLowerResponse {
                 .brandId(brand.getId())
                 .brandName(brand.getName())
                 .brandLogoUrl(brand.getBrandLogoUrl())
+                .brandBannerUrl(brand.getBrandBannerUrl())
                 .scrapCount(scrapCount)
                 .productCount(productCount)
                 .build();

@@ -16,14 +16,14 @@ public class UserScrapBrandResponse {
     private Long brandId;
     private String brandName;
     private String brandLogoUrl;
-    private String brandGenre;
+    private String brandBannerUrl;
 
     public static UserScrapBrandResponse of(Brand brand) {
         return UserScrapBrandResponse.builder()
                 .brandId(brand.getId())
                 .brandName(brand.getName())
                 .brandLogoUrl(brand.getBrandLogoUrl())
-                .brandGenre(brand.getBrandGenre().name())
+                .brandBannerUrl(brand.getBrandBannerUrl())
                 .build();
     }
 

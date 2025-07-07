@@ -71,6 +71,16 @@ public class BrandService {
         Brand brand = brandRepository.findById(brandId)
                 .orElseThrow(() -> new RuntimeException("브랜드가 존재하지 않습니다."));
 
+        List<ProductResponse> productResponses = brand.getProducts().stream()
+                .map(product -> ProductResponse.builder()
+                        .id(product.getId())
+                        .productName(product.getProductName())
+                        .productImageUrl(product.getProductImageUrl())
+                        .productCategory(product.getProductCategory())
+                        .build()
+                )
+                .toList();
+
         return BrandResponse.builder()
                 .id(brand.getId())
                 .name(brand.getName())
@@ -79,6 +89,7 @@ public class BrandService {
                 .brandGenre(brand.getBrandGenre().name())
                 .brandHomepageUrl(brand.getBrandHomepageUrl())
                 .description(brand.getDescription())
+                .products(productResponses)
                 .build();
     }
 
