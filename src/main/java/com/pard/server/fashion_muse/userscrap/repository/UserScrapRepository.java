@@ -33,4 +33,25 @@ public interface UserScrapRepository extends JpaRepository<UserScrap, Long> {
 """)
     List<Object[]> findTopBrandsByScrapCount(Pageable pageable);
 
+    @Query("""
+    select 
+        b.id,
+        b.name,
+        b.brandLogoUrl,
+        count(distinct us.id) as scrapCount,
+        count(distinct p.id) as productCount
+    from Brand b
+    left join UserScrap us on us.brand.id = b.id
+    left join Product p on p.brand.id = b.id
+    group by 
+        b.id,
+        b.name,
+        b.brandLogoUrl
+    order by 
+        scrapCount asc,
+        productCount desc
+""")
+    List<Object[]> findBrandsByScrapAscAndProductDesc(Pageable pageable);
+
+
 }

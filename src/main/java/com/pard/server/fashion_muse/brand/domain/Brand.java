@@ -27,9 +27,12 @@ public class Brand {
 
     private String brandBannerUrl;
 
-    private Integer brandGenre;
+    @Enumerated(EnumType.STRING)
+    private BrandGenre brandGenre;
 
     private String brandHomepageUrl;
+
+    private String description;
 
     @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();

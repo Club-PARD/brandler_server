@@ -1,6 +1,8 @@
 package com.pard.server.fashion_muse.brand.service;
 
 import com.pard.server.fashion_muse.brand.controller.request.BrandCreateRequest;
+import com.pard.server.fashion_muse.brand.controller.responseDto.BrandLowerResponse;
+import com.pard.server.fashion_muse.brand.controller.responseDto.BrandResponse;
 import com.pard.server.fashion_muse.brand.controller.responseDto.BrandUpperResponse;
 import com.pard.server.fashion_muse.user.controller.response.UserScrapResponse;
 import com.pard.server.fashion_muse.brand.domain.Brand;
@@ -39,6 +41,39 @@ public class BrandService {
                         .scrapCount((Long) row[3])
                         .build())
                 .toList();
+    }
+
+    @Transactional
+    public List<BrandLowerResponse> getLowScrapBrands(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        List<Object[]> results = userScrapRepository.findBrandsByScrapAscAndProductDesc(pageable);
+
+        return results.stream()
+                .map(row -> BrandLowerResponse.builder()
+                        .brandId((Long) row[0])
+                        .brandName((String) row[1])
+                        .brandLogoUrl((String) row[2])
+                        .scrapCount((Long) row[3])
+                        .productCount((Long) row[4])
+                        .build())
+                .toList();
+    }
+
+    @Transactional
+    public BrandResponse getBrand(Long brandId) {
+        Brand brand = brandRepository.findById(brandId)
+                .orElseThrow(() -> new RuntimeException("브랜드가 존재하지 않습니다."));
+
+        return BrandResponse.builder()
+                .id(brand.getId())
+                .name(brand.getName())
+                .brandLogoUrl(brand.getBrandLogoUrl())
+                .brandBannerUrl(brand.getBrandBannerUrl())
+                .brandGenre(brand.getBrandGenre().name())
+                .brandHomepageUrl(brand.getBrandHomepageUrl())
+                .description(brand.getDescription())
+                .build();
     }
 
     @Transactional

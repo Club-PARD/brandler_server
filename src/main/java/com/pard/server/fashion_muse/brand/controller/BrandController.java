@@ -1,6 +1,8 @@
 package com.pard.server.fashion_muse.brand.controller;
 
 import com.pard.server.fashion_muse.brand.controller.request.BrandCreateRequest;
+import com.pard.server.fashion_muse.brand.controller.responseDto.BrandLowerResponse;
+import com.pard.server.fashion_muse.brand.controller.responseDto.BrandResponse;
 import com.pard.server.fashion_muse.brand.controller.responseDto.BrandUpperResponse;
 import com.pard.server.fashion_muse.brand.domain.Brand;
 import com.pard.server.fashion_muse.user.controller.response.UserScrapResponse;
@@ -20,10 +22,25 @@ public class BrandController {
 
     private final BrandService brandService;
 
-    @GetMapping("/brands/top")
+    @GetMapping("/top")
     public ResponseEntity<List<BrandUpperResponse>> getTopBrands() {
         List<BrandUpperResponse> result = brandService.getTop10ScrappedBrands();
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/low")
+    public ResponseEntity<List<BrandLowerResponse>> getLowScrapBrands(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        List<BrandLowerResponse> result = brandService.getLowScrapBrands(page, size);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/{brandId}")
+    public ResponseEntity<BrandResponse> getBrand(@PathVariable Long brandId) {
+        BrandResponse response = brandService.getBrand(brandId);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping
