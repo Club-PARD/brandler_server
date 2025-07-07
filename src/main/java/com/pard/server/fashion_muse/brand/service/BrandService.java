@@ -4,10 +4,13 @@ import com.pard.server.fashion_muse.brand.controller.request.BrandCreateRequest;
 import com.pard.server.fashion_muse.brand.controller.responseDto.BrandLowerResponse;
 import com.pard.server.fashion_muse.brand.controller.responseDto.BrandResponse;
 import com.pard.server.fashion_muse.brand.controller.responseDto.BrandUpperResponse;
+import com.pard.server.fashion_muse.brand.domain.BrandGenre;
 import com.pard.server.fashion_muse.user.controller.response.UserScrapResponse;
 import com.pard.server.fashion_muse.brand.domain.Brand;
 import com.pard.server.fashion_muse.user.domain.User;
 import com.pard.server.fashion_muse.user.repository.UserRepository;
+import com.pard.server.fashion_muse.userbrandhistory.domain.UserBrandHistory;
+import com.pard.server.fashion_muse.userbrandhistory.repository.UserBrandHistoryRepository;
 import com.pard.server.fashion_muse.userscrap.domain.UserScrap;
 import com.pard.server.fashion_muse.userscrap.repository.UserScrapRepository;
 import com.pard.server.fashion_muse.brand.repository.Brandrepository;
@@ -17,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +31,7 @@ public class BrandService {
     private final Brandrepository brandRepository;
     private final UserRepository userRepository;
     private final UserScrapRepository userScrapRepository;
+    private final UserBrandHistoryRepository userBrandHistoryRepository;
 
     @Transactional
     public List<BrandUpperResponse> getTop10ScrappedBrands() {
@@ -77,12 +82,45 @@ public class BrandService {
     }
 
     @Transactional
+    public void saveBrandHistory(Long userId, Long brandId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다."));
+
+        Brand brand = brandRepository.findById(brandId)
+                .orElseThrow(() -> new RuntimeException("브랜드가 존재하지 않습니다."));
+
+        Optional<UserBrandHistory> existingHistory =
+                userBrandHistoryRepository.findByUserAndBrand(user, brand);
+
+        if (existingHistory.isPresent()) {
+            existingHistory.get().setViewedAt(LocalDateTime.now());
+        } else {
+            UserBrandHistory history = UserBrandHistory.builder()
+                    .user(user)
+                    .brand(brand)
+                    .viewedAt(LocalDateTime.now())
+                    .build();
+            userBrandHistoryRepository.save(history);
+        }
+
+        List<UserBrandHistory> allHistories =
+                userBrandHistoryRepository.findByUserOrderByViewedAtDesc(user);
+
+        if (allHistories.size() > 10) {
+            List<UserBrandHistory> toDelete =
+                    allHistories.subList(10, allHistories.size());
+            userBrandHistoryRepository.deleteAll(toDelete);
+        }
+    }
+
+
+    @Transactional
     public Brand createBrand(BrandCreateRequest request) {
         Brand brand = new Brand();
         brand.setName(request.getName());
         brand.setBrandLogoUrl(request.getBrandLogoUrl());
         brand.setBrandBannerUrl(request.getBrandBannerUrl());
-        brand.setBrandGenre(request.getBrandGenre());
+        brand.setBrandGenre(BrandGenre.from(request.getBrandGenre()));
         brand.setBrandHomepageUrl(request.getBrandHomepageUrl());
 
         return brandRepository.save(brand);

@@ -1,5 +1,6 @@
 package com.pard.server.fashion_muse.user.service;
 
+import com.pard.server.fashion_muse.brand.controller.responseDto.BrandResponse;
 import com.pard.server.fashion_muse.brand.domain.Brand;
 import com.pard.server.fashion_muse.brand.repository.Brandrepository;
 import com.pard.server.fashion_muse.user.controller.request.UserCreateRequest;
@@ -7,6 +8,8 @@ import com.pard.server.fashion_muse.user.controller.response.UserScrapBrandRespo
 import com.pard.server.fashion_muse.user.controller.response.UserScrapResponse;
 import com.pard.server.fashion_muse.user.domain.User;
 import com.pard.server.fashion_muse.user.repository.UserRepository;
+import com.pard.server.fashion_muse.userbrandhistory.domain.UserBrandHistory;
+import com.pard.server.fashion_muse.userbrandhistory.repository.UserBrandHistoryRepository;
 import com.pard.server.fashion_muse.userscrap.domain.UserScrap;
 import com.pard.server.fashion_muse.userscrap.repository.UserScrapRepository;
 import jakarta.transaction.Transactional;
@@ -23,6 +26,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final Brandrepository brandRepository;
     private final UserScrapRepository userScrapRepository;
+    private final UserBrandHistoryRepository userBrandHistoryRepository;
 
     @Transactional
     public UserScrapResponse userScrap(Long userId, Long brandId) {
@@ -72,9 +76,43 @@ public class UserService {
     }
 
     @Transactional
+    public List<BrandResponse> getRecentBrands(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다."));
+
+        List<UserBrandHistory> histories =
+                userBrandHistoryRepository.findByUserOrderByViewedAtDesc(user);
+
+        return histories.stream()
+                .map(history -> {
+                    Brand brand = history.getBrand();
+                    return BrandResponse.builder()
+                            .id(brand.getId())
+                            .name(brand.getName())
+                            .brandLogoUrl(brand.getBrandLogoUrl())
+                            .brandBannerUrl(brand.getBrandBannerUrl())
+                            .brandGenre(brand.getBrandGenre().name())
+                            .brandHomepageUrl(brand.getBrandHomepageUrl())
+                            .description(brand.getDescription())
+                            .build();
+                })
+                .toList();
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("유저가 존재하지 않습니다."));
+    }
+
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    @Transactional
     public User createUser(UserCreateRequest request) {
         User user = new User();
         user.setName(request.getName());
+        user.setEmail(request.getEmail());
         user.setGenre(request.getGenre());
         return userRepository.save(user);
     }

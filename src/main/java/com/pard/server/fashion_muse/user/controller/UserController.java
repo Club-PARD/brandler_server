@@ -1,6 +1,8 @@
 package com.pard.server.fashion_muse.user.controller;
 
+import com.pard.server.fashion_muse.brand.controller.responseDto.BrandResponse;
 import com.pard.server.fashion_muse.user.controller.request.UserCreateRequest;
+import com.pard.server.fashion_muse.user.controller.response.UserResponse;
 import com.pard.server.fashion_muse.user.controller.response.UserScrapBrandResponse;
 import com.pard.server.fashion_muse.user.controller.response.UserScrapResponse;
 import com.pard.server.fashion_muse.user.domain.User;
@@ -21,30 +23,49 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/{brandId}/scraps")
-    public ResponseEntity<UserScrapResponse> userScrap(@PathVariable Long brandId) {
-        //현재는 임시, 로그인을 안했기 때문
-        Long userId = 1L;
-        UserScrapResponse response = userService.userScrap(userId, brandId);
+    public ResponseEntity<UserScrapResponse> userScrap(@PathVariable Long brandId,
+                                                       @RequestParam String email) {
+        User user = userService.findByEmail(email);
+        UserScrapResponse response = userService.userScrap(user.getId(), brandId);
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{userId}/scraps")
-    public ResponseEntity<List<UserScrapBrandResponse>> getUserBrandScraps(@PathVariable Long userId) {
-        //로그인 안한 상태여서 userId임시로 사용
-        List<UserScrapBrandResponse> scraps = userService.getUserScrapList(userId);
+    @GetMapping("/scraps")
+    public ResponseEntity<List<UserScrapBrandResponse>> getUserBrandScraps(@RequestParam String email) {
+        User user = userService.findByEmail(email);
+        List<UserScrapBrandResponse> scraps = userService.getUserScrapList(user.getId());
         return ResponseEntity.ok(scraps);
     }
 
-    @DeleteMapping("/{userId}/scraps")
-    public ResponseEntity<Void> deleteUserBrandScrap(@PathVariable Long userId,
+    @DeleteMapping("/scraps")
+    public ResponseEntity<Void> deleteUserBrandScrap(@RequestParam String email,
                                                      @RequestBody List<Long> brandIds) {
-        userService.deleteUserScrap(userId, brandIds);
+        User user = userService.findByEmail(email);
+        userService.deleteUserScrap(user.getId(), brandIds);
         return ResponseEntity.ok(null);
     }
 
+    @GetMapping("/recent")
+    public ResponseEntity<List<BrandResponse>> getRecentBrands(@RequestParam String email) {
+        User user = userService.findByEmail(email);
+        List<BrandResponse> result = userService.getRecentBrands(user.getId());
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/auth/check-email")
+    public ResponseEntity<Void> checkEmail(@RequestParam String email) {
+        boolean exists = userService.existsByEmail(email);
+        if (exists) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.noContent().build();
+        }
+    }
+
+
     @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody @Valid UserCreateRequest request) {
+    public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserCreateRequest request) {
         User savedUser = userService.createUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserResponse.of(savedUser));
     }
 }

@@ -7,6 +7,8 @@ import com.pard.server.fashion_muse.brand.controller.responseDto.BrandUpperRespo
 import com.pard.server.fashion_muse.brand.domain.Brand;
 import com.pard.server.fashion_muse.user.controller.response.UserScrapResponse;
 import com.pard.server.fashion_muse.brand.service.BrandService;
+import com.pard.server.fashion_muse.user.domain.User;
+import com.pard.server.fashion_muse.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,7 @@ import java.util.List;
 public class BrandController {
 
     private final BrandService brandService;
+    private final UserService userService;
 
     @GetMapping("/top")
     public ResponseEntity<List<BrandUpperResponse>> getTopBrands() {
@@ -38,7 +41,10 @@ public class BrandController {
     }
 
     @GetMapping("/{brandId}")
-    public ResponseEntity<BrandResponse> getBrand(@PathVariable Long brandId) {
+    public ResponseEntity<BrandResponse> getBrand(@PathVariable Long brandId,
+                                                  @RequestParam String email) {
+        User user = userService.findByEmail(email);
+        brandService.saveBrandHistory(user.getId(), brandId);
         BrandResponse response = brandService.getBrand(brandId);
         return ResponseEntity.ok(response);
     }

@@ -1,5 +1,6 @@
 package com.pard.server.fashion_muse.brand.controller.request;
 
+import com.pard.server.fashion_muse.brand.domain.BrandGenre;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ public class BrandCreateRequest {
     private String name;
     private String brandLogoUrl;
     private String brandBannerUrl;
-    private Integer brandGenre;
+    private String brandGenre;
     private String brandHomepageUrl;
 
 }
