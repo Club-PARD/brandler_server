@@ -5,6 +5,7 @@ import com.pard.server.fashion_muse.brand.controller.responseDto.BrandLowerRespo
 import com.pard.server.fashion_muse.brand.controller.responseDto.BrandResponse;
 import com.pard.server.fashion_muse.brand.controller.responseDto.BrandUpperResponse;
 import com.pard.server.fashion_muse.brand.domain.Brand;
+import com.pard.server.fashion_muse.product.controller.response.ProductResponse;
 import com.pard.server.fashion_muse.user.controller.response.UserScrapResponse;
 import com.pard.server.fashion_muse.brand.service.BrandService;
 import com.pard.server.fashion_muse.user.domain.User;
@@ -47,6 +48,14 @@ public class BrandController {
         brandService.saveBrandHistory(user.getId(), brandId);
         BrandResponse response = brandService.getBrand(brandId);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{brandId}/products")
+    public ResponseEntity<List<ProductResponse>> getBrandProducts(
+            @PathVariable Long brandId) {
+
+        List<ProductResponse> result = brandService.getBrandProducts(brandId);
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping

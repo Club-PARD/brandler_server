@@ -5,6 +5,7 @@ import com.pard.server.fashion_muse.brand.controller.responseDto.BrandLowerRespo
 import com.pard.server.fashion_muse.brand.controller.responseDto.BrandResponse;
 import com.pard.server.fashion_muse.brand.controller.responseDto.BrandUpperResponse;
 import com.pard.server.fashion_muse.brand.domain.BrandGenre;
+import com.pard.server.fashion_muse.product.controller.response.ProductResponse;
 import com.pard.server.fashion_muse.user.controller.response.UserScrapResponse;
 import com.pard.server.fashion_muse.brand.domain.Brand;
 import com.pard.server.fashion_muse.user.domain.User;
@@ -111,6 +112,16 @@ public class BrandService {
                     allHistories.subList(10, allHistories.size());
             userBrandHistoryRepository.deleteAll(toDelete);
         }
+    }
+
+    @Transactional
+    public List<ProductResponse> getBrandProducts(Long brandId) {
+        Brand brand = brandRepository.findById(brandId)
+                .orElseThrow(() -> new RuntimeException("브랜드가 존재하지 않습니다."));
+
+        return brand.getProducts().stream()
+                .map(ProductResponse::of)
+                .toList();
     }
 
 
